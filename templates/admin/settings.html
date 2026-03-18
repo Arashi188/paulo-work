@@ -1,0 +1,186 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin Settings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Admin Settings</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- Profile Settings -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person-circle"></i> Profile Settings</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.update_profile') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Update Profile
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Change Password -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Change Password</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.change_password') }}">
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        <div class="form-text">Minimum 8 characters with at least one number and one letter</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-key"></i> Change Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <!-- Store Settings -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-shop"></i> Store Settings</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.update_store_settings') }}">
+                    <div class="mb-3">
+                        <label for="store_name" class="form-label">Store Name</label>
+                        <input type="text" class="form-control" id="store_name" name="store_name" value="{{ store_settings.name|default('E-Store') }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="store_email" class="form-label">Store Email</label>
+                        <input type="email" class="form-control" id="store_email" name="store_email" value="{{ store_settings.email|default('') }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="store_phone" class="form-label">Store Phone</label>
+                        <input type="tel" class="form-control" id="store_phone" name="store_phone" value="{{ store_settings.phone|default('') }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="whatsapp_number" class="form-label">WhatsApp Number</label>
+                        <input type="tel" class="form-control" id="whatsapp_number" name="whatsapp_number" value="{{ store_settings.whatsapp|default('2347088028747') }}">
+                        <div class="form-text">Include country code without + sign</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="currency" class="form-label">Currency</label>
+                        <select class="form-select" id="currency" name="currency">
+                            <option value="NGN" {% if store_settings.currency == 'NGN' %}selected{% endif %}>₦ Naira (NGN)</option>
+                            <option value="USD" {% if store_settings.currency == 'USD' %}selected{% endif %}>$ Dollar (USD)</option>
+                            <option value="EUR" {% if store_settings.currency == 'EUR' %}selected{% endif %}>€ Euro (EUR)</option>
+                            <option value="GBP" {% if store_settings.currency == 'GBP' %}selected{% endif %}>£ Pound (GBP)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Save Store Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Backup & Restore -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-database"></i> Backup & Restore</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.export_data') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-download"></i> Export Data (CSV)
+                    </a>
+                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-upload"></i> Import Data
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#clearModal">
+                        <i class="bi bi-exclamation-triangle"></i> Clear All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Import Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Upload a CSV file with your data. The file should have headers matching your database structure.</p>
+                <form method="POST" action="{{ url_for('admin.import_data') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="import_file" class="form-label">CSV File</label>
+                        <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="data_type" class="form-label">Data Type</label>
+                        <select class="form-select" id="data_type" name="data_type">
+                            <option value="products">Products</option>
+                            <option value="orders">Orders</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clear Data Modal -->
+<div class="modal fade" id="clearModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">⚠️ Warning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>This action will permanently delete all data. This cannot be undone!</p>
+                <p>Are you absolutely sure you want to continue?</p>
+                <form method="POST" action="{{ url_for('admin.clear_data') }}">
+                    <div class="mb-3">
+                        <label for="confirm_text" class="form-label">Type "DELETE" to confirm</label>
+                        <input type="text" class="form-control" id="confirm_text" name="confirm_text" required pattern="DELETE">
+                    </div>
+                    <button type="submit" class="btn btn-danger">Clear All Data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

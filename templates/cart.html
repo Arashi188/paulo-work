@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - E-Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Shopping Cart</h1>
+    
+    {% set cart_items = session.get('cart', []) %}
+    
+    {% if cart_items %}
+        <div class="row">
+            <div class="col-lg-8">
+                {% for item in cart_items %}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            {% if item.image_url %}
+                            <img src="{{ item.image_url }}" class="img-fluid rounded-start" alt="{{ item.name }}" style="height: 150px; object-fit: cover;">
+                            {% else %}
+                            <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Product Image">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="card-title">{{ item.name }}</h5>
+                                        <p class="card-text">
+                                            <span class="h5 text-primary">₦{{ "%.2f"|format(item.price) }}</span><br>
+                                            Quantity: {{ item.quantity }}
+                                        </p>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('main.remove_from_cart', product_id=item.product_id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        {% set total = 0 %}
+                        {% for item in cart_items %}
+                            {% set total = total + (item.price * item.quantity) %}
+                        {% endfor %}
+                        
+                        <table class="table">
+                            <tr>
+                                <td>Subtotal ({{ cart_items|length }} items)</td>
+                                <td class="text-end">₦{{ "%.2f"|format(total) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Shipping</td>
+                                <td class="text-end">Free</td>
+                            </tr>
+                            <tr class="h5">
+                                <td>Total</td>
+                                <td class="text-end text-primary">₦{{ "%.2f"|format(total) }}</td>
+                            </tr>
+                        </table>
+                        
+                        <a href="{{ url_for('main.checkout') }}" class="btn btn-success w-100">
+                            <i class="bi bi-whatsapp"></i> Proceed to Checkout
+                        </a>
+                        
+                        <a href="{{ url_for('main.products') }}" class="btn btn-outline-secondary w-100 mt-2">
+                            Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x display-1 text-muted"></i>
+            <h3 class="mt-3">Your cart is empty</h3>
+            <p class="text-muted">Looks like you haven't added any items to your cart yet.</p>
+            <a href="{{ url_for('main.products') }}" class="btn btn-primary">Start Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

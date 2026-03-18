@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Sitemap{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Sitemap</h1>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-house"></i> Main Pages</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('main.index') }}">Home</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.products') }}">All Products</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.about') }}">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.faq') }}">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-cart"></i> Shopping</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('main.products') }}">Browse Products</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.view_cart') }}">Shopping Cart</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.checkout') }}">Checkout</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.products') }}?category=new">New Arrivals</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.products') }}?sort=popular">Popular Products</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Policies</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('main.terms') }}">Terms and Conditions</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.privacy') }}">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.shipping') }}">Shipping Information</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.returns') }}">Returns Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Categories -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="bi bi-tags"></i> Product Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% set categories = [
+                            ('Electronics', 'electronics'),
+                            ('Fashion', 'fashion'),
+                            ('Home & Garden', 'home-garden'),
+                            ('Sports & Outdoors', 'sports'),
+                            ('Beauty & Health', 'beauty'),
+                            ('Toys & Games', 'toys'),
+                            ('Books', 'books'),
+                            ('Automotive', 'automotive'),
+                            ('Pet Supplies', 'pets'),
+                            ('Office Products', 'office')
+                        ] %}
+                        
+                        {% for category_name, category_slug in categories %}
+                        <div class="col-md-3 col-6 mb-2">
+                            <a href="{{ url_for('main.products', category=category_slug) }}" class="text-decoration-none">
+                                <i class="bi bi-chevron-right"></i> {{ category_name }}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- All Products List -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-box"></i> All Products</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in all_products %}
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="{{ url_for('main.product_detail', id=product.id) }}" class="text-decoration-none">
+                                <small><i class="bi bi-dot"></i> {{ product.name }}</small>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

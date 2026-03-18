@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Order Successful{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success display-1"></i>
+                    </div>
+                    <h1 class="display-4 mb-3">Order Successful!</h1>
+                    <p class="lead mb-4">Thank you for your order. We have received your request and will contact you shortly.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-whatsapp"></i> 
+                        You have been redirected to WhatsApp. Please complete your order by sending the message.
+                    </div>
+                    
+                    <div class="order-details bg-light p-4 rounded mb-4">
+                        <h5>Order Summary</h5>
+                        {% if orders %}
+                            {% for order in orders %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Order #{{ order.id }}</span>
+                                <span>{{ order.product.name }} (x{{ order.quantity }})</span>
+                                <span class="text-primary">₦{{ "%.2f"|format(order.product.price * order.quantity) }}</span>
+                            </div>
+                            {% endfor %}
+                            <hr>
+                            <div class="d-flex justify-content-between h5">
+                                <span>Total</span>
+                                <span class="text-primary">₦{{ "%.2f"|format(total) }}</span>
+                            </div>
+                        {% else %}
+                            <p>Order #{{ order.id }} - {{ order.customer_name }}</p>
+                            <p>Product: {{ order.product.name }} (x{{ order.quantity }})</p>
+                            <p class="h5">Total: ₦{{ "%.2f"|format(order.product.price * order.quantity) }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('main.products') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-shop"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

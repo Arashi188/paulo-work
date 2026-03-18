@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Shipping Information{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Shipping Information</h1>
+    
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h4>Delivery Options</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Delivery Method</th>
+                                    <th>Estimated Time</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Standard Delivery (Lagos)</td>
+                                    <td>1-2 business days</td>
+                                    <td>₦1,500</td>
+                                </tr>
+                                <tr>
+                                    <td>Standard Delivery (Other States)</td>
+                                    <td>3-5 business days</td>
+                                    <td>₦2,500 - ₦5,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Express Delivery (Lagos)</td>
+                                    <td>Same day (order before 12pm)</td>
+                                    <td>₦3,500</td>
+                                </tr>
+                                <tr>
+                                    <td>Express Delivery (Other States)</td>
+                                    <td>1-2 business days</td>
+                                    <td>₦5,000 - ₦8,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Pickup Station</td>
+                                    <td>1 business day after notification</td>
+                                    <td>Free</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="mt-4">Shipping Process</h4>
+                    <ol>
+                        <li><strong>Order Confirmation:</strong> You'll receive an order confirmation via WhatsApp immediately after placing your order.</li>
+                        <li><strong>Processing:</strong> Orders are processed within 24 hours of confirmation.</li>
+                        <li><strong>Dispatch:</strong> You'll receive a notification with tracking information when your order is dispatched.</li>
+                        <li><strong>Delivery:</strong> Our delivery partner will contact you to arrange delivery.</li>
+                    </ol>
+                    
+                    <h4 class="mt-4">Free Shipping</h4>
+                    <p>Enjoy free shipping on orders above ₦50,000! This offer applies to standard delivery within Lagos and major cities in Nigeria.</p>
+                    
+                    <h4 class="mt-4">Tracking Your Order</h4>
+                    <p>Once your order is dispatched, you'll receive:</p>
+                    <ul>
+                        <li>A tracking number via WhatsApp</li>
+                        <li>Link to track your package online</li>
+                        <li>Estimated delivery date</li>
+                        <li>Contact information of the delivery agent</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">Delivery Areas</h4>
+                    <p>We currently deliver to all states in Nigeria including:</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul>
+                                <li>Lagos</li>
+                                <li>Abuja (FCT)</li>
+                                <li>Port Harcourt</li>
+                                <li>Kano</li>
+                                <li>Ibadan</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul>
+                                <li>Benin City</li>
+                                <li>Kaduna</li>
+                                <li>Enugu</li>
+                                <li>Warri</li>
+                                <li>Onitsha</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul>
+                                <li>Abeokuta</li>
+                                <li>Akure</li>
+                                <li>Calabar</li>
+                                <li>Jos</li>
+                                <li>Maiduguri</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h4 class="mt-4">International Shipping</h4>
+                    <p>We currently ship within Nigeria only. For international orders, please contact us directly for special arrangements.</p>
+                    
+                    <h4 class="mt-4">Delivery Issues</h4>
+                    <p>If you experience any delivery issues:</p>
+                    <ul>
+                        <li>Check your tracking information</li>
+                        <li>Contact our delivery partner using the provided contact</li>
+                        <li>WhatsApp us at <a href="https://wa.me/2347088028747">+234 708 802 8747</a> for assistance</li>
+                    </ul>
+                    
+                    <div class="alert alert-info mt-4">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Note:</strong> Delivery times are estimates and may vary due to factors beyond our control such as weather conditions, traffic, or public holidays.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

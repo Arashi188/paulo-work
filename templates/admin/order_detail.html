@@ -1,0 +1,69 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Order #{{ order.id }} Details{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Order #{{ order.id }} Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6>Customer Information</h6>
+                        <p>
+                            <strong>Name:</strong> {{ order.customer_name }}<br>
+                            <strong>Email:</strong> {{ order.customer_email or 'Not provided' }}<br>
+                            <strong>Phone:</strong> {{ order.phone }}<br>
+                            <strong>Order Date:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Product Information</h6>
+                        <p>
+                            <strong>Product:</strong> {{ order.product.name }}<br>
+                            <strong>Price:</strong> ₦{{ "%.2f"|format(order.product.price) }}<br>
+                            <strong>Quantity:</strong> {{ order.quantity }}<br>
+                            <strong>Total:</strong> ₦{{ "%.2f"|format(order.product.price * order.quantity) }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if order.product.image_url %}
+                        <img src="{{ order.product.image_url }}" alt="{{ order.product.name }}" class="img-fluid rounded" style="max-height: 200px;">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Order Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    {% for value, label in form.status.choices %}
+                                    <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Update Status
+                            </button>
+                            
+                            <a href="{{ url_for('admin.orders') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Orders
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
