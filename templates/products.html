@@ -8,26 +8,59 @@
     
     <div class="row">
         <!-- Sidebar filters -->
-        <div class="col-md-3">
-            <div class="card">
+        <div class="col-md-3 mb-4">
+            <div class="card sticky-top" style="top: 80px; z-index: 100;">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Filters</h5>
+                    <h5 class="mb-0"><i class="bi bi-funnel"></i> Filters</h5>
                 </div>
                 <div class="card-body">
                     <form method="get" action="{{ url_for('main.products') }}">
                         <div class="mb-3">
-                            <label for="search" class="form-label">Search</label>
-                            <input type="text" class="form-control" id="search" name="search" value="{{ search }}" placeholder="Search products...">
+                            <label for="search" class="form-label fw-bold">Search Products</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="search" name="search" value="{{ search }}" placeholder="What are you looking for?">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                        <a href="{{ url_for('main.products') }}" class="btn btn-outline-secondary w-100 mt-2">Clear Filters</a>
+                        
+                        <hr>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-filter"></i> Apply Filters
+                            </button>
+                            <a href="{{ url_for('main.products') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Clear Filters
+                            </a>
+                        </div>
                     </form>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        Showing {% if products %}{{ products|length }}{% else %}0{% endif %} products
+                    </small>
                 </div>
             </div>
         </div>
         
         <!-- Product grid -->
         <div class="col-md-9">
+            <!-- Active filters display -->
+            {% if search %}
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-search"></i> 
+                    Searching for: <strong>"{{ search }}"</strong>
+                </span>
+                <a href="{{ url_for('main.products') }}" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-x"></i> Clear
+                </a>
+            </div>
+            {% endif %}
+            
             <div class="row">
                 {% if products %}
                     {% for product in products %}
@@ -36,43 +69,61 @@
                             {% if product.image_url %}
                             <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
                             {% else %}
-                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Product Image">
+                            <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="Product Image">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ product.name }}</h5>
                                 <p class="card-text text-truncate">{{ product.description }}</p>
                                 <p class="h5 text-primary">₦{{ "%.2f"|format(product.price) }}</p>
                             </div>
-                            <div class="card-footer bg-transparent">
-                                <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-primary w-100">View Details</a>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-primary">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                    <form method="POST" action="{{ url_for('main.add_to_cart', product_id=product.id) }}" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-outline-success w-100">
+                                            <i class="bi bi-cart-plus"></i> Quick Add
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
                     <div class="col-12">
-                        <div class="alert alert-info">
-                            No products found. Please try a different search term.
+                        <div class="alert alert-info text-center py-5">
+                            <i class="bi bi-emoji-frown display-1"></i>
+                            <h3 class="mt-3">No Products Found</h3>
+                            <p class="mb-4">We couldn't find any products matching your criteria.</p>
+                            <a href="{{ url_for('main.products') }}" class="btn btn-primary">
+                                <i class="bi bi-arrow-left"></i> View All Products
+                            </a>
                         </div>
                     </div>
                 {% endif %}
             </div>
             
             <!-- Pagination -->
-            {% if pagination.pages > 1 %}
+            {% if pagination and pagination.pages > 1 %}
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if pagination.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('main.products', page=pagination.prev_num, search=search) }}">Previous</a>
+                        <a class="page-link" href="{{ url_for('main.products', page=pagination.prev_num, search=search) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
+                        <span class="page-link">&laquo;</span>
                     </li>
                     {% endif %}
                     
-                    {% for page_num in pagination.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
                         {% if page_num %}
                             {% if page_num == pagination.page %}
                             <li class="page-item active">
@@ -85,22 +136,28 @@
                             {% endif %}
                         {% else %}
                             <li class="page-item disabled">
-                                <span class="page-link">...</span>
+                                <span class="page-link">&hellip;</span>
                             </li>
                         {% endif %}
                     {% endfor %}
                     
                     {% if pagination.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('main.products', page=pagination.next_num, search=search) }}">Next</a>
+                        <a class="page-link" href="{{ url_for('main.products', page=pagination.next_num, search=search) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
-                        <span class="page-link">Next</span>
+                        <span class="page-link">&raquo;</span>
                     </li>
                     {% endif %}
                 </ul>
             </nav>
+            
+            <div class="text-center text-muted small mt-2">
+                Showing page {{ pagination.page }} of {{ pagination.pages }}
+            </div>
             {% endif %}
         </div>
     </div>

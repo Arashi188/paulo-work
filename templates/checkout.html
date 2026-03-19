@@ -14,24 +14,29 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('main.place_order') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
                         <div class="mb-3">
                             <label for="customer_name" class="form-label">Full Name *</label>
                             <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                            <div class="form-text">Enter your full name as it appears on ID</div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="customer_email" class="form-label">Email Address (Optional)</label>
                             <input type="email" class="form-control" id="customer_email" name="customer_email">
+                            <div class="form-text">We'll send your order confirmation here</div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone Number *</label>
                             <input type="tel" class="form-control" id="phone" name="phone" required>
+                            <div class="form-text">We'll contact you via WhatsApp on this number</div>
                         </div>
                         
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle"></i> 
-                            After placing your order, you'll be redirected to WhatsApp to complete your purchase.
+                            <strong>Important:</strong> After placing your order, you'll be redirected to WhatsApp to complete your purchase. Please make sure your phone number is correct.
                         </div>
                         
                         <button type="submit" class="btn btn-success btn-lg w-100">
@@ -48,17 +53,30 @@
                     <h5 class="mb-0">Order Summary</h5>
                 </div>
                 <div class="card-body">
+                    {% set total = namespace(value=0) %}
                     {% for item in cart_items %}
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>{{ item.name }} (x{{ item.quantity }})</span>
-                        <span>₦{{ "%.2f"|format(item.price * item.quantity) }}</span>
-                    </div>
+                        {% set total.value = total.value + (item.price * item.quantity) %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ item.name }} <small class="text-muted">x{{ item.quantity }}</small></span>
+                            <span>₦{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                        </div>
                     {% endfor %}
                     <hr>
                     <div class="d-flex justify-content-between h5">
                         <span>Total</span>
-                        <span class="text-primary">₦{{ "%.2f"|format(total) }}</span>
+                        <span class="text-primary">₦{{ "%.2f"|format(total.value) }}</span>
                     </div>
+                    
+                    <div class="mt-3 small text-muted">
+                        <i class="bi bi-truck"></i> Free shipping on all orders
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6><i class="bi bi-shield-check text-success"></i> Secure Checkout</h6>
+                    <p class="small text-muted">Your information is protected by SSL encryption</p>
                 </div>
             </div>
         </div>

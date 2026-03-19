@@ -16,7 +16,7 @@
                     <div class="row g-0">
                         <div class="col-md-3">
                             {% if item.image_url %}
-                            <img src="{{ item.image_url }}" class="img-fluid rounded-start" alt="{{ item.name }}" style="height: 150px; object-fit: cover;">
+                            <img src="{{ item.image_url }}" class="img-fluid rounded-start" alt="{{ item.name }}" style="height: 150px; width: 100%; object-fit: cover;">
                             {% else %}
                             <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Product Image">
                             {% endif %}
@@ -32,7 +32,8 @@
                                         </p>
                                     </div>
                                     <form method="POST" action="{{ url_for('main.remove_from_cart', product_id=item.product_id) }}">
-                                        <button type="submit" class="btn btn-sm btn-danger">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this item?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -50,15 +51,15 @@
                         <h5 class="mb-0">Order Summary</h5>
                     </div>
                     <div class="card-body">
-                        {% set total = 0 %}
+                        {% set total = namespace(value=0) %}
                         {% for item in cart_items %}
-                            {% set total = total + (item.price * item.quantity) %}
+                            {% set total.value = total.value + (item.price * item.quantity) %}
                         {% endfor %}
                         
                         <table class="table">
                             <tr>
                                 <td>Subtotal ({{ cart_items|length }} items)</td>
-                                <td class="text-end">₦{{ "%.2f"|format(total) }}</td>
+                                <td class="text-end">₦{{ "%.2f"|format(total.value) }}</td>
                             </tr>
                             <tr>
                                 <td>Shipping</td>
@@ -66,7 +67,7 @@
                             </tr>
                             <tr class="h5">
                                 <td>Total</td>
-                                <td class="text-end text-primary">₦{{ "%.2f"|format(total) }}</td>
+                                <td class="text-end text-primary">₦{{ "%.2f"|format(total.value) }}</td>
                             </tr>
                         </table>
                         
@@ -75,7 +76,7 @@
                         </a>
                         
                         <a href="{{ url_for('main.products') }}" class="btn btn-outline-secondary w-100 mt-2">
-                            Continue Shopping
+                            <i class="bi bi-arrow-left"></i> Continue Shopping
                         </a>
                     </div>
                 </div>
@@ -86,7 +87,9 @@
             <i class="bi bi-cart-x display-1 text-muted"></i>
             <h3 class="mt-3">Your cart is empty</h3>
             <p class="text-muted">Looks like you haven't added any items to your cart yet.</p>
-            <a href="{{ url_for('main.products') }}" class="btn btn-primary">Start Shopping</a>
+            <a href="{{ url_for('main.products') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-shop"></i> Start Shopping
+            </a>
         </div>
     {% endif %}
 </div>

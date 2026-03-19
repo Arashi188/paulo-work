@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, current_app
 from flask_login import login_required, current_user
 from app.models import Product, Order, HeroSlide
 from app.forms import OrderForm
@@ -13,9 +13,16 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
     """Homepage with featured products and hero slideshow"""
-    featured_products = Product.query.order_by(Product.created_at.desc()).limit(6).all()
+    try:
+        featured_products = Product.query.order_by(Product.created_at.desc()).limit(6).all()
+    except:
+        featured_products = []
+    
     # Get active hero slides ordered by the 'order' field
-    hero_slides = HeroSlide.query.filter_by(is_active=True).order_by(HeroSlide.order).all()
+    try:
+        hero_slides = HeroSlide.query.filter_by(is_active=True).order_by(HeroSlide.order).all()
+    except:
+        hero_slides = []
     
     # If no slides in database, use default slides
     if not hero_slides:
@@ -108,7 +115,8 @@ def create_order(product_id):
         encoded_message = quote(message)
         
         # Redirect to WhatsApp
-        whatsapp_url = f"https://wa.me/{os.environ.get('WHATSAPP_NUMBER', '2347088028747')}?text={encoded_message}"
+        whatsapp_number = os.environ.get('WHATSAPP_NUMBER', '2347088028747')
+        whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
         return redirect(whatsapp_url)
     
     # If form validation fails
@@ -220,7 +228,8 @@ def place_order():
         message = f"Hello, I want to order this product: {product.name} (₦{product.price:,.2f}). My order ID is {orders[0].id}. Product link: {product_url}"
     
     encoded_message = quote(message)
-    whatsapp_url = f"https://wa.me/{os.environ.get('WHATSAPP_NUMBER', '2347088028747')}?text={encoded_message}"
+    whatsapp_number = os.environ.get('WHATSAPP_NUMBER', '2347088028747')
+    whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
     
     flash(f'Orders placed successfully! You will be redirected to WhatsApp.', 'success')
     return redirect(whatsapp_url)
@@ -274,5 +283,8 @@ def returns():
 def sitemap():
     """Sitemap page"""
     # Get all products for sitemap
-    all_products = Product.query.order_by(Product.name).all()
+    try:
+        all_products = Product.query.order_by(Product.name).all()
+    except:
+        all_products = []
     return render_template('sitemap.html', all_products=all_products)

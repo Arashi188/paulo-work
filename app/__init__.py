@@ -22,8 +22,20 @@ csrf = CSRFProtect()
 def create_app(config_class=Config):
     app = Flask(__name__, 
                 template_folder='../templates',
-                static_folder='../static')
+                static_folder='../static',
+                static_url_path='/static')
     app.config.from_object(config_class)
+    
+    # Ensure secret key is set
+    if not app.config['SECRET_KEY'] or app.config['SECRET_KEY'] == 'your-secret-key-change-this-in-production':
+        app.config['SECRET_KEY'] = os.urandom(24).hex()
+        print("⚠️ Warning: Using a random secret key. Set SECRET_KEY environment variable for production.")
+    
+    # Handle database URL for Vercel (ensure it uses the correct format)
+    database_url = app.config['SQLALCHEMY_DATABASE_URI']
+    if database_url and database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     
     # Initialize extensions with app
     db.init_app(app)
@@ -68,9 +80,14 @@ def create_app(config_class=Config):
     def too_large(error):
         return 'File is too large. Maximum size is 16MB.', 413
     
-    # Create tables and admin user
+    # Create tables and admin user (only in development or first run)
     with app.app_context():
         try:
+            # Check if database is accessible
+            from sqlalchemy import text
+            db.session.execute(text('SELECT 1'))
+            db.session.commit()
+            
             # Create all tables
             db.create_all()
             print("✅ Database tables created successfully!")
