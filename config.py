@@ -12,7 +12,7 @@ class Config:
         DATABASE_URL = os.environ.get('DATABASE_URL')
         if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
             DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-        SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'postgresql://postgres:mFxwM5qnfYFABSD9@db.jhnpanznxoanclyrzvqx.supabase.co:5432/postgres'
+        SQLALCHEMY_DATABASE_URI = DATABASE_URL
         
         SQLALCHEMY_ENGINE_OPTIONS = {
             'pool_size': 5,
@@ -33,11 +33,12 @@ class Config:
     
     # Session config
     PERMANENT_SESSION_LIFETIME = timedelta(days=1)
-    SESSION_COOKIE_SECURE = False  # Set to True only in production with HTTPS
+    # Set to True in production (Vercel), False for local development
+    SESSION_COOKIE_SECURE = True if os.environ.get('VERCEL_ENV') else False
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     
-    # Cloudinary config
+    # Cloudinary config - your credentials
     CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', 'dapuaw0u6')
     CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', '738952696443951')
     CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', 'CzRSL1UUAnGoOI1xnrc1NwlMIiU')
@@ -45,7 +46,7 @@ class Config:
     # Admin settings
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@paulo-store.com')
-    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin123!')
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Newpassword123')
     
     # WhatsApp settings
     WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '2347088028747')

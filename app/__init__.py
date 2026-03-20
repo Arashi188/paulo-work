@@ -26,10 +26,14 @@ def create_app(config_class=Config):
                 static_url_path='/static')
     app.config.from_object(config_class)
     
-    # Ensure secret key is set
-    if not app.config['SECRET_KEY'] or app.config['SECRET_KEY'] == 'your-secret-key-change-this-in-production':
-        app.config['SECRET_KEY'] = os.urandom(24).hex()
-        print("⚠️ Warning: Using a random secret key. Set SECRET_KEY environment variable for production.")
+    # Ensure secret key is set for production
+    if not app.config['SECRET_KEY'] or app.config['SECRET_KEY'] == 'dev-secret-key-change-in-production':
+        if os.environ.get('VERCEL_ENV'):
+            # In production, require SECRET_KEY to be set
+            app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24).hex())
+            print("⚠️ Using random secret key. Set SECRET_KEY environment variable for production.")
+        else:
+            app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
     
     # Handle database URL for Vercel (ensure it uses the correct format)
     database_url = app.config['SQLALCHEMY_DATABASE_URI']
@@ -80,7 +84,12 @@ def create_app(config_class=Config):
     def too_large(error):
         return 'File is too large. Maximum size is 16MB.', 413
     
-    # Create tables and admin user (only in development or first run)
+    @app.errorhandler(400)
+    def bad_request_error(error):
+        flash('Bad request. Please check your input.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    # Create tables and admin user
     with app.app_context():
         try:
             # Check if database is accessible
@@ -106,6 +115,7 @@ def create_app(config_class=Config):
                 db.session.add(admin)
                 db.session.commit()
                 print(f"✅ Admin user created: {app.config['ADMIN_USERNAME']}")
+                print(f"   Password: {app.config['ADMIN_PASSWORD']}")
             else:
                 print(f"✅ Admin user already exists: {admin.username}")
                 
