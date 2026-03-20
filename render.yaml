@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: paulo-ecommerce
+    runtime: python
+    repo: https://github.com/Arashi188/paulo-work
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: postgresql://postgres:mFxwM5qnfYFABSD9@db.jhnpanznxoanclyrzvqx.supabase.co:5432/postgres
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dapuaw0u6
+      - key: CLOUDINARY_API_KEY
+        value: 738952696443951
+      - key: CLOUDINARY_API_SECRET
+        value: CzRSL1UUAnGoOI1xnrc1NwlMIiU
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: Newpassword123
+      - key: ADMIN_EMAIL
+        value: admin@paulo-store.com
+      - key: WHATSAPP_NUMBER
+        value: 2347088028747
+      - key: PYTHON_VERSION
+        value: 3.9.0
